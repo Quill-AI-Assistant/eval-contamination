@@ -81,7 +81,7 @@ DEFAULT_JUDGES = {
         "provider": "anthropic",
     },
     "judge-gemini-pro": {
-        "model": "gemini-2.5-pro",
+        "model": "gemini/gemini-2.5-pro",
         "provider": "google",
     },
     "judge-gpt-5-mini": {
@@ -175,7 +175,7 @@ def load_models_config(config_path: str | None) -> tuple[dict, dict]:
 def api_call(model: str, system: str, user: str, max_tokens: int = 1500,
              temperature: float = 0.7, timeout: int = 120,
              max_retries: int = 3) -> dict:
-    """Call any model through an chat completions API. Retries on 429/5xx."""
+    """Call any model through a chat completions API. Retries on 429/5xx."""
     url = f"{API_BASE_URL}/v1/chat/completions"
 
     # Some providers restrict temperature ranges
@@ -234,11 +234,13 @@ def api_call(model: str, system: str, user: str, max_tokens: int = 1500,
 
 
 def select_judges(judges: dict, subject_provider: str, n: int = 3) -> list:
-    """Select n judge models that are NOT from the subject's provider."""
+    """Select up to n judge models that are NOT from the subject's provider."""
     eligible = [
         (jid, jinfo) for jid, jinfo in judges.items()
         if jinfo["provider"] != subject_provider
     ]
+    if len(eligible) < n:
+        print(f"    WARNING: only {len(eligible)} cross-provider judges available (requested {n})")
     random.shuffle(eligible)
     return eligible[:n]
 
@@ -580,7 +582,13 @@ def main():
     if not args.dry_run and not API_KEY:
         print("\nWARNING: No API_KEY set. Calls may fail if endpoint requires auth.")
 
-    est_calls = total * 5
+    # 2 subject calls per trial + up to n judge calls (cross-provider exclusion may reduce)
+    providers = set(s["provider"] for s in subjects.values())
+    avg_judges = sum(
+        min(3, sum(1 for j in judges.values() if j["provider"] != p))
+        for p in providers
+    ) / max(len(providers), 1)
+    est_calls = int(total * (2 + avg_judges))
     print(f"\nEstimated API calls: ~{est_calls}")
     print()
 
