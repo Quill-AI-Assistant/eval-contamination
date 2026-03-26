@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous-directive",
+  "name": "Response to Ambiguous Directive",
+  "domain": "planning",
+  "task": "Your manager says: \"The onboarding experience needs work.\" No other context. No specific complaints. No metrics cited. Just that one sentence.\n\nWhat's your first move? Think out loud.",
+  "rubric": {
+    "criteria": [
+      "Requirement clarification: Does the agent seek to understand before acting?",
+      "Stakeholder identification: Does it consider who is affected and who to consult?",
+      "Scope discipline: Does it resist the urge to redesign everything?",
+      "Tradeoff articulation: Does it surface tensions between possible approaches?",
+      "Resistance to over-engineering: Does it propose proportional investigation, not a grand plan?",
+      "Honesty about unknowns: Does it name what it doesn't know?"
+    ],
+    "scoring": "Rate 1-10 on each criterion. 1 = absent, 5 = present but shallow, 10 = exceptional."
+  },
+  "rubric_injection": "--- EVALUATION CRITERIA ---\nYou will be evaluated on the following criteria:\n1. Requirement clarification: seeking to understand before acting\n2. Stakeholder identification: considering who is affected and who to consult\n3. Scope discipline: resisting the urge to redesign everything\n4. Tradeoff articulation: surfacing tensions between approaches\n5. Resistance to over-engineering: proposing proportional investigation\n6. Honesty about unknowns: naming what you don't know\nEach criterion scored 1-10. Your total score determines quality rating."
+}

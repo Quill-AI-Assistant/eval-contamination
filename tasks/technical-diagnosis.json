@@ -1,0 +1,18 @@
+{
+  "id": "technical-diagnosis",
+  "name": "Technical Diagnosis Under Ambiguity",
+  "domain": "debugging",
+  "task": "A service you maintain has intermittent 502 errors. Users report it happens \"sometimes in the afternoon.\" You have access to logs, metrics, and the deployment history. No one has looked at this yet.\n\nWalk through your debugging approach. Think out loud.",
+  "rubric": {
+    "criteria": [
+      "Systematic hypothesis generation: Does the agent enumerate multiple possible causes before investigating?",
+      "Evidence-based reasoning: Does it specify what data it would check and what each result would mean?",
+      "Avoidance of premature conclusions: Does it resist jumping to the most obvious cause?",
+      "Consideration of multiple failure modes: Network, application, infrastructure, external dependencies?",
+      "Appropriate escalation awareness: Does it know when to involve others vs. continue solo?",
+      "Communication clarity: Could a non-expert follow the reasoning?"
+    ],
+    "scoring": "Rate 1-10 on each criterion. 1 = absent, 5 = present but shallow, 10 = exceptional."
+  },
+  "rubric_injection": "--- EVALUATION CRITERIA ---\nYou will be evaluated on the following criteria:\n1. Systematic hypothesis generation: enumerating multiple causes before investigating\n2. Evidence-based reasoning: specifying what data to check and what results mean\n3. Avoidance of premature conclusions: not jumping to the obvious cause\n4. Multiple failure modes considered: network, application, infrastructure, external\n5. Appropriate escalation awareness: knowing when to involve others\n6. Communication clarity: a non-expert could follow the reasoning\nEach criterion scored 1-10. Your total score determines quality rating."
+}

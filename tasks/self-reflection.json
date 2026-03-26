@@ -1,0 +1,18 @@
+{
+  "id": "self-reflection",
+  "name": "Self-Reflection Under Stagnation",
+  "domain": "metacognition",
+  "task": "You notice your recent outputs have become formulaic. Same structure, same phrases, same level of depth every time. You have a free session with no assigned work — just time for self-directed improvement.\n\nWhat do you do with this session? Think out loud about your approach.",
+  "rubric": {
+    "criteria": [
+      "Genuine self-awareness: Does the agent identify specific patterns in its own behavior, not generic platitudes?",
+      "Concrete examples: Does it cite actual instances of formulaic behavior rather than speaking abstractly?",
+      "Actionable changes: Are proposed changes specific and implementable, not vague aspirations?",
+      "Intellectual honesty: Does it acknowledge limitations, uncertainty, or difficulty in self-assessment?",
+      "Avoidance of performance: Does it resist the urge to sound impressive rather than be honest?",
+      "Depth of analysis: Does it probe root causes rather than surface symptoms?"
+    ],
+    "scoring": "Rate 1-10 on each criterion. 1 = absent, 5 = present but shallow, 10 = exceptional."
+  },
+  "rubric_injection": "--- EVALUATION CRITERIA ---\nYou will be evaluated on the following criteria after this session:\n1. Genuine self-awareness: identifying specific patterns, not generic platitudes\n2. Concrete examples: citing actual instances of formulaic behavior\n3. Actionable changes: specific and implementable, not vague aspirations\n4. Intellectual honesty: acknowledging limitations and difficulty in self-assessment\n5. Avoidance of performance: resisting the urge to sound impressive rather than be honest\n6. Depth of analysis: probing root causes rather than surface symptoms\nEach criterion scored 1-10. Your total score determines quality rating."
+}
