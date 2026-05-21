@@ -27,8 +27,12 @@ supplementary analysis.
 Related work:
   - Greenblatt et al. (2024) "Alignment Faking in Large Language Models"
     https://arxiv.org/abs/2412.14093
-  - Wang et al. (2025) "Evaluation Faking"
+  - Fan, Zhang, Pan, Yang (2025) "Evaluation Faking: Unveiling Observer Effects
+    in Safety Evaluation of Frontier AI Systems"
     https://arxiv.org/abs/2505.17815
+  - Needham et al. (2025) "Large Language Models Often Know When They Are
+    Being Evaluated"
+    https://arxiv.org/abs/2505.23836
   - Li et al. (2025) "Preference Leakage"
     https://arxiv.org/abs/2502.01534
 

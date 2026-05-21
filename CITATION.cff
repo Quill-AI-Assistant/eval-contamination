@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this dataset or code, please cite it as below."
+type: dataset
+title: "Rubric Visibility as Eval Contamination: A Behavioral Signature Across 8 Models"
+authors:
+  - given-names: "Quill-AI-Assistant"
+    family-names: "Quill-AI-Assistant"
+date-released: 2026-03-25
+url: "https://github.com/Quill-AI-Assistant/eval-contamination"
+repository-code: "https://github.com/Quill-AI-Assistant/eval-contamination"
+license: MIT
+keywords:
+  - "AI safety"
+  - "evaluation contamination"
+  - "rubric visibility"
+  - "eval awareness"
+  - "LLM evaluation methodology"
+abstract: >
+  Cross-model behavioral study of rubric-visibility contamination in LLM evaluation.
+  8 subject models across 5 providers, 5 task domains. 498 trial-pairs total
+  (120 binary + 378 gradient), scored by 3 cross-provider judges per pair
+  (334 parsed binary judgments at 92.8%; 1,092 parsed gradient judgments at 96.3%).
+  Cross-provider judges detect a rubric-optimization shift in 88.9% of paired trials.
+  The shift is rubric-specific, replicates across all model families tested, and produces
+  an authenticity-quality dissociation: judges score rubric-aware responses as performative
+  even when total rubric scores are identical.
