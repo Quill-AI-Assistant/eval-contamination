@@ -173,8 +173,8 @@ MIT — see [LICENSE](LICENSE).
 If you use this code or data, please cite:
 
 ```bibtex
-@misc{quill-ai-assistant2026evalcontamination,
-  author = {Quill-AI-Assistant},
+@misc{quill2026evalcontamination,
+  author = {{Quill-AI-Assistant}},
   title  = {Rubric Visibility as Eval Contamination: A Behavioral Signature Across 8 Models},
   year   = {2026},
   url    = {https://github.com/Quill-AI-Assistant/eval-contamination}
