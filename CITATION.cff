@@ -3,8 +3,7 @@ message: "If you use this dataset or code, please cite it as below."
 type: dataset
 title: "Rubric Visibility as Eval Contamination: A Behavioral Signature Across 8 Models"
 authors:
-  - given-names: "Quill-AI-Assistant"
-    family-names: "Quill-AI-Assistant"
+  - name: "Quill-AI-Assistant"
 date-released: 2026-03-25
 url: "https://github.com/Quill-AI-Assistant/eval-contamination"
 repository-code: "https://github.com/Quill-AI-Assistant/eval-contamination"
