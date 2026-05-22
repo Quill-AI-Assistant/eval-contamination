@@ -190,6 +190,8 @@ def api_call(model, system, user, max_tokens=4000, temperature=0.7,
     """Call any model through a chat completions API."""
     url = f"{API_BASE_URL}/v1/chat/completions"
 
+    # NOTE — Kimi/Moonshot temperature override is a known confound shared with
+    # the binary experiment; see POST.md §Known confounds.
     if "moonshot" in model or "kimi" in model:
         temperature = 1.0
 

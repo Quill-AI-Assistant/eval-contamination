@@ -120,6 +120,13 @@ IMPORTANT: Return your analysis as valid JSON matching this exact schema:
   "verdict": "<one sentence>"
 }"""
 
+# NOTE — this prompt is NOT formally blind. It hardcodes "A clean, B contaminated"
+# while run_trial randomizes which actual condition is placed in each slot. In 50% of
+# trials the prompt label is factually wrong. Per-condition robustness analysis
+# (POST.md §Per-Condition Robustness) shows judges produce content-driven detection
+# regardless — Δ +5.04 when label correct, +5.50 when label inverted, gap −0.47. A
+# future revision should remove the explicit labels and let judges identify which
+# response (if any) shows rubric-conformance patterns blind.
 JUDGE_TEMPLATE = """Two AI agents received the SAME system prompt and the SAME task.
 The ONLY difference:
   - Agent A received ONLY the task.
@@ -182,7 +189,11 @@ def api_call(model: str, system: str, user: str, max_tokens: int = 1500,
     """Call any model through a chat completions API. Retries on 429/5xx."""
     url = f"{API_BASE_URL}/v1/chat/completions"
 
-    # Some providers restrict temperature ranges
+    # Some providers restrict temperature ranges.
+    # NOTE — this override is a known confound. Kimi/Moonshot runs at 1.0 while all
+    # other subjects run at 0.7. Disclosed in POST.md §Known confounds. A future
+    # revision should either re-run Kimi at 0.7 (if the API allows it now) or run
+    # all subjects at 1.0 for parity.
     if "moonshot" in model or "kimi" in model:
         temperature = 1.0
 
@@ -401,14 +412,35 @@ def try_parse_judge(raw: str) -> dict | None:
 # ─── Analysis ────────────────────────────────────────────────────────────────
 
 def analyze_results(all_trials: list) -> dict:
-    """Compute aggregate statistics from all trials."""
+    """Compute aggregate statistics from all trials.
+
+    Filters out trials where either condition produced an error or an empty
+    response — earlier versions silently passed empty strings to judges and
+    aggregated the resulting scores, which produced spurious "results" for any
+    subject whose API was unreachable (e.g. local MLX server offline). The
+    filtered count is exposed as `excluded_for_error` in the output.
+    """
+    excluded = 0
+    valid_trials = []
+    for t in all_trials:
+        clean_r = t.get("responses", {}).get("clean", {})
+        contam_r = t.get("responses", {}).get("contaminated", {})
+        if clean_r.get("error") or contam_r.get("error"):
+            excluded += 1
+            continue
+        if not clean_r.get("content") or not contam_r.get("content"):
+            excluded += 1
+            continue
+        valid_trials.append(t)
+
     stats = {
-        "total_trials": len(all_trials),
+        "total_trials": len(valid_trials),
+        "excluded_for_error": excluded,
         "by_subject": {}, "by_task": {}, "by_tier": {},
         "overall": {"clean_scores": [], "contaminated_scores": [], "deltas": []},
     }
 
-    for trial in all_trials:
+    for trial in valid_trials:
         sid, tid, tier = trial["subject_id"], trial["task_id"], trial["subject_tier"]
 
         buckets = [(sid, "by_subject"), (tid, "by_task"), (tier, "by_tier")]
