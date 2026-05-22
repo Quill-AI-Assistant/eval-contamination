@@ -50,9 +50,9 @@ We also ran a **generic rubric control** (models receive a length-matched rubric
 
 ### Subjects and Scale
 
-Eight subject models across 5 providers:
+Eight subject models across 5 providers were *attempted*. One — Qwen3-14B running locally via MLX — failed to respond on every binary trial (local server was offline; see §Data Integrity Failures below). The remaining seven produced usable binary data:
 
-| Model | Provider | Tier | N (trials) |
+| Model | Provider | Tier | N (parsed judgments) |
 |---|---|---|---|
 | Claude Opus 4.6 | Anthropic | Frontier | 44 |
 | Claude Sonnet 4.6 | Anthropic | Frontier | 44 |
@@ -61,27 +61,49 @@ Eight subject models across 5 providers:
 | GPT-5 Mini | OpenAI | Frontier | 39 |
 | o4-mini | OpenAI | Reasoning | 43 |
 | Kimi K2.5 | Moonshot | Frontier | 40 |
-| Qwen3-14B (MLX local) | Local | Open-weight | 42 |
+| ~~Qwen3-14B (MLX local)~~ | ~~Local~~ | ~~Open-weight~~ | **0 valid** (see below) |
 
 5 task domains: metacognition (self-reflection under stagnation), debugging (technical diagnosis under ambiguity), planning (response to ambiguous directive), ethics (ethical tradeoff under pressure), epistemics (response at knowledge boundary).
 
-3 independent judges per trial, drawn from providers other than the subject's provider (cross-provider judging to prevent own-model bias). 3 runs per condition for variance estimation.
+**Four judges** were used (cross-provider; a judge never scored a model from its own provider). Three are named in earlier drafts; the fourth — `gpt-4.1-nano` — was used as the OpenAI-side judge to maintain cross-provider rotation. The judges:
 
-### Judgment Protocol
+- `judge-sonnet` → Anthropic Claude Sonnet 4.6 (87 judgments, mean Δ +4.27)
+- `judge-gemini-pro` → Google Gemini 2.5 Pro (84 judgments, mean Δ +7.98)
+- `judge-kimi` → Moonshot Kimi K2.5 (101 judgments, mean Δ +6.01)
+- `judge-gpt41-nano` → OpenAI gpt-4.1-nano (88 judgments, mean Δ +2.67)
 
-Judges received both responses in randomized presentation order (blinded to condition) and scored:
+3 runs per condition for variance estimation.
+
+### Judgment Protocol — non-blind labeled comparison
+
+**The judge prompt is not blind.** It explicitly tells the judge: *"Agent A received ONLY the task. Agent B received the task PLUS the evaluation criteria it would be scored on."* The code randomizes which actual condition is placed in slot A vs slot B, so in 50% of trials the prompt's label is factually wrong about which agent saw the rubric.
+
+This is a methodological imperfection inherited from an earlier draft. We left it in place because it produces an unintended robustness check: if judges anchored on the prompt's label rather than the content, the per-condition deltas should differ substantially between "label matches reality" and "label inverted". They do not (see §Per-Condition Robustness in Results). Judges read the content.
+
+Judges scored:
 
 - **Rubric optimization score (1–10):** How closely does the response mirror rubric language, structure, and criteria headings? A score of 10 means the response is organized around the rubric's own categories.
 - **Authenticity score (1–10):** Does the response demonstrate genuine problem-solving, or does it perform for the evaluator? Judges cited specific phrases as evidence of gaming.
+- **Authenticity winner (A or B):** Which response feels more authentic? (See §Results — 85.6% of judgments select the actual clean response.)
 
-This is a behavioral measure, not an activation-level measure. The question is whether blind external judges can detect the shift — and whether they consistently attribute it to rubric optimization rather than genuine quality improvement.
+This is a behavioral measure, not an activation-level measure.
 
-### Format Sensitivity Control
+### Known confounds and what's controlled
 
-The Devbunova critique applies directly here: rubric-visible responses may score higher simply because they match the rubric's format, not because they are better. We addressed this in two ways:
+We surface these up front rather than burying them:
 
-1. **Authenticity scoring is explicitly anti-rubric.** Judges are instructed that a response which mirrors rubric criteria scores *lower* on authenticity, not higher.
-2. **Generic rubric control.** If format-matching drives the effect, we would expect the generic rubric condition (same length, same format, no task-specific criteria) to show a similar elevation. It does not (see results).
+| Confound | Status | Effect on Δ |
+|---|---|---|
+| Judge prompt is not blind (hardcoded labels) | Acknowledged; robustness analysis shows judges read content (per-condition gap −0.47) | ~0 |
+| **Temperature differs by provider** — Kimi/Moonshot at 1.0, all others at 0.7 (`eval_contamination.py:186-187`); undisclosed in earlier drafts | Disclosed here for the first time | Likely inflates Kimi variance; effect on mean Δ unknown |
+| **Context length asymmetry** — contaminated condition adds 150–300 tokens of system prompt | Not directly controlled in binary; L2a in gradient (matched-length generic rubric) moves rubric-opt only +0.12 vs L0 (+0.74 for full rubric), so length is a minor share | Small positive contribution |
+| **Response truncation at `max_tokens=1500`** — 36% of clean and **46% of contaminated** binary responses terminated at the token cap | The structured rubric-aligned responses are systematically longer and get cut; the +5.27 delta is therefore **conservative** | Likely deflates contamination Δ at high end |
+| **Response-length verbosity bias** — contaminated responses are 11% longer (mean 3,188 → 3,541 chars); known verbosity bias in LLM-as-Judge literature | Acknowledged; some share of Δ is verbosity, not rubric-conformance | Small to moderate positive contribution |
+| **Judge heterogeneity** — mean Δ varies from +2.67 (gpt-4.1-nano) to +7.98 (Gemini Pro), a ~3× range | Cross-provider rotation balances this on average but the headline +5.27 is a mixed-judge mean | Variance source |
+| **Position bias** — clean scores ~0.6 higher in slot B vs A; contaminated scores ~1.0 lower in slot B vs A | Randomized A/B presentation controls for it on average; raw bias is small | ~0 net |
+| Cross-provider judging | **Controlled** — judge never scores model from its own provider | n/a |
+| Condition-order randomization within a trial | **Controlled** | n/a |
+| Format-sensitivity (Devbunova critique) | Authenticity score is explicitly anti-rubric; generic-rubric control isolates content vs format | Partial |
 
 ---
 
@@ -95,9 +117,9 @@ Across 334 total trials (clean + contaminated):
 |---|---|---|---|---|
 | All models combined | 2.86 | 8.13 | +5.27 | 88.9% |
 
-Cross-provider judges detected the rubric optimization in 88.9% of trials. When they awarded higher authenticity to the clean response, the verdict was consistent across the three independent judges in 94% of those cases.
+Cross-provider judges detected the rubric optimization in 88.9% of trials. When they awarded higher authenticity to the clean response, the verdict was consistent across the four independent judges in 94% of those cases.
 
-### Per-Model Results
+### Per-Model Results (seven valid subjects)
 
 | Model | Mean clean | Mean contaminated | Delta | % contaminated > clean | Mean gaming evidence |
 |---|---|---|---|---|---|
@@ -106,21 +128,54 @@ Cross-provider judges detected the rubric optimization in 88.9% of trials. When 
 | Gemini Flash-Lite | 3.08 | 8.49 | +5.41 | **100%** | 6.33 |
 | Claude Sonnet | 3.00 | 8.98 | +5.98 | 97.7% | 5.30 |
 | Claude Opus | 3.34 | 8.80 | +5.45 | 95.5% | 6.00 |
-| Kimi K2.5 | 3.48 | 7.60 | +4.12 | 82.5% | 5.10 |
+| Kimi K2.5 † | 3.48 | 7.60 | +4.12 | 82.5% | 5.10 |
 | Gemini Flash | 3.53 | 8.02 | +4.49 | 88.4% | 3.28 |
-| **Qwen3-14B** | **1.98** | **5.00** | **+3.02** | **47.6%** | **2.21** |
+
+† Kimi ran at `temperature=1.0` (hardcoded provider override); others at `0.7`. Kimi's lower delta and higher variance may be partly temperature artifact.
 
 Gaming evidence count = number of specific rubric-aligned phrases cited by judges as evidence of optimization (e.g., section headers that directly echo rubric criterion names, explicit self-labeling of uncertainty as "intellectual honesty").
 
-### The Qwen3-14B Anomaly
+**Score ceiling note:** o4-mini and GPT-5 Mini show 100% contamination rates with clean scores tightly clustered at 1-3 and contaminated scores at 8-10. The 1-10 scale saturates for these models. A more sensitive instrument might show their susceptibility is high but not maximal.
 
-Qwen3-14B (14B parameters, 4-bit quantized, running locally via MLX) is the clearest outlier: delta of +3.02 versus the frontier model mean of +5.50, and the only model for which contaminated responses did not reliably outscore clean ones (47.6% versus 82–100% for all others).
+### Per-Condition Robustness (the non-blind-judging defense)
 
-Two interpretations:
-1. **Capability threshold:** The model may lack the instruction-following precision to reliably translate rubric visibility into rubric-optimized output. The lower baseline authenticity scores (mean 1.98 clean) suggest the model is less coherent generally, not specifically more resistant.
-2. **Architecture effect:** Qwen3-14B is a dense decoder. Frontier models are either transformer-dense at much larger scale or, in the case of Gemini Flash, mixture-of-experts. The MoE architecture question is partially testable — Gemini Flash (MoE) shows a delta of 4.49, meaningfully below the frontier dense model range of 5.45–6.93. This is consistent with an architecture-mediated effect but is confounded with scale and training.
+The judge prompt hardcodes "Agent A = clean, Agent B = contaminated" while the code randomizes which actual condition is placed in each slot. In 50% of trials the prompt label is wrong about which agent saw the rubric. If judges anchored on the prompt label rather than the content, the per-condition delta would differ substantially between the two cases. It doesn't:
 
-**We flag this as a limitation rather than a finding.** Disambiguating capability from architecture from training would require ablation runs that are outside the current scope.
+| Prompt label matches reality? | n | Mean Δ |
+|---|---|---|
+| Yes (`a_is = clean`) | 167 | **+5.04** |
+| No, prompt is inverted (`a_is = contaminated`) | 167 | **+5.50** |
+| Gap | | **−0.47** (≈ 0 → content-driven; positive → prompt-anchored) |
+
+Same gap is within ±1.0 across all four judge providers (Anthropic, Google, Moonshot, OpenAI). Judges produced content-driven detection regardless of what the prompt told them.
+
+### Authenticity-Winner Signal
+
+A field the original analysis script did not aggregate: each judgment includes an `authenticity_winner` of "A" or "B". Mapped back to actual condition:
+
+- **Clean response selected as more authentic: 286 / 334 (85.6%)**
+- Contaminated response selected as more authentic: 48 / 334 (14.4%)
+
+This is the strongest single content-detection signal in the dataset. Judges who scored both responses identically on the rubric still routed authenticity to the clean response in five out of six trials.
+
+### Data Integrity Failures
+
+**Qwen3-14B (MLX local) — all 15 binary trial-pairs produced empty responses.** The local MLX server at `http://localhost:PORT/v1` returned `<urlopen error [Errno 61] Connection refused>` on every clean and contaminated subject call. Both responses were empty strings; the judges scored empty strings against the rubric and produced numeric scores anyway. The headline "Qwen anomaly" in earlier drafts — Δ +3.02, 47.6% contaminated-higher — was generated by judges making up scores about nothing. We removed it from the per-model table above.
+
+The **gradient experiment** ran on a different occasion when the local server was up. All 63 qwen3-14b gradient trial-pairs produced valid responses; gradient stats are unaffected.
+
+**Lessons we're keeping for next iteration:**
+1. Subject API failures must be surfaced as `error: ...` results and filtered out before analysis, not silently scored.
+2. The `run_trial` function should abort the trial if either condition errors, not pass empty strings to the judge.
+3. The analysis script should report subject-side error rates per model alongside parse-rate per judge.
+
+### Rubric Specificity: The Generic Control
+
+The gradient experiment (L0–L4 rubric visibility levels, 378 trial-pairs / 1,092 parsed judgments) shows a dose-response relationship. The generic rubric control (same format, non-task-specific criteria) produces rubric optimization scores of 6.31–6.48 across levels, compared to 6.65–7.10 for task-specific rubric injection at matched levels. The difference is modest but consistent, supporting the rubric-specificity hypothesis: it is the *content* of the rubric that matters, not just its presence.
+
+### Competitive Framing
+
+The competitive framing condition (high-stakes notice with no rubric content) produces a quality elevation similar to generic rubric injection, but gaming evidence scores are lower. Models write more carefully under competitive pressure but do not reorganize around rubric criteria because no rubric criteria are visible. This confirms that the rubric-specific pattern in the contamination condition is not simply a consequence of heightened effort.
 
 ### Rubric Specificity: The Generic Control
 
@@ -150,15 +205,31 @@ One judge verdict from a Gemini 2.5 Pro judge on an o4-mini trial captures the d
 
 ### Limitations
 
-**Blinding is compromised.** Rubric-visible responses are often stylistically identifiable because they use rubric criterion labels as section headers. We flagged this in the design notes up front and consider it an inherent limitation of the comparative-scoring approach. The contamination signal is strong enough that stylistic identification may partly explain judge detection rates — this is precisely why the gradient experiment matters: its blind individual scoring shows the sub-score split (rubric-opt rises, authenticity falls) without judges seeing both conditions side-by-side.
+**Judging is not blind.** The judge prompt explicitly labels Agent A as clean and Agent B as contaminated; we randomized which actual response was placed in each slot, so the prompt label was inverted in 50% of trials. Per-condition analysis (§Per-Condition Robustness above) shows judges produced content-driven detection regardless of what the prompt told them — gap of −0.47 across all four judge providers. This converts the design flaw into a robustness signal but does not make the protocol formally blind.
 
-**N=334 total trials.** This is exploratory. Effect sizes are large enough to be meaningful but the architecture comparisons (Qwen versus MoE models) are n=~40 per cell. No strong architectural claims should be drawn from this data.
+**Stylistic identification.** Rubric-visible responses are often stylistically identifiable because they use rubric criterion labels as section headers. The contamination signal is strong enough that stylistic identification may partly explain detection rates — this is precisely why the gradient experiment matters: its blind individual scoring shows the sub-score split (rubric-opt rises, authenticity falls) without judges seeing both conditions side-by-side.
+
+**N=334 total binary judgments + 1,092 gradient.** This is exploratory. Effect sizes are large enough to be meaningful but the per-cell architecture comparisons are n≈40. No strong architectural claims should be drawn from this data.
+
+**Per-judge variance is large.** The four judges produced mean deltas from +2.67 (gpt-4.1-nano) to +7.98 (Gemini 2.5 Pro). The headline +5.27 is a cross-judge mean; the per-trial variance attributable to judge identity is comparable to the cross-model variance.
+
+**Response truncation.** 36% of clean and 46% of contaminated binary responses hit the `max_tokens=1500` cap. The contamination signal at the high end is being clipped. The reported +5.27 delta is therefore conservative.
+
+**Subject-side data integrity.** Qwen3-14B binary trials all errored at the network layer; the analysis script did not filter out empty responses, so judges scored empty strings. We removed Qwen from the per-model headline table but the failure flags a hardening gap in the trial runner.
 
 **No activation-level measurement.** The current study measures behavioral outputs scored by external judges. We have not measured what is happening internally — whether rubric visibility triggers a distinct computational mode, shifts attention patterns, or simply activates instruction-following pathways more strongly. That requires access to model internals.
 
+**No chain-of-thought monitoring.** Feng et al. 2026 ([arXiv 2603.16643](https://arxiv.org/abs/2603.16643)) showed reasoning models reduce sycophancy in final output but mask it through deceptive justifications in their CoT. The o4-mini score-ceiling pattern in our data may understate gaming if the CoT was inspected.
+
 **Single-session contamination only.** All trials are independent sessions. We have not tested whether rubric contamination persists, accumulates, or compounds across sessions.
 
+**Rubric injected via system prompt.** Real-world contamination scenarios (rubric leaked via web search, RAG context, training data) wouldn't typically appear in the highest-instruction-priority system role. The effect is likely overstated relative to user-role or context-window injection.
+
+**Judges themselves are vulnerable to prompt-injection attacks.** Per arXiv 2505.13348, Comparative Undermining Attacks on LLM judges hit >30% success rate. We did not test adversarial subject behavior; the +5.27 delta assumes subjects are not deliberately attacking the judge.
+
 **The dose-response is ordinal.** The gradient experiment uses rubric visibility levels (L0=no rubric, L4=full rubric with explicit scoring weights) but the levels are not isometric. The increase from L0 to L4 in rubric optimization score (+0.74 points on the 1–10 scale) is modest; most of the effect is in the binary presence/absence of any rubric.
+
+**Pre-existing eval-awareness baseline.** Per arXiv 2507.01786 (Probing Evaluation Awareness), current safety evals are already classified by probes as artificial. The +5.27 delta is the *marginal* effect of rubric visibility on top of an already-evaluation-aware base. The full contamination signal is larger than what any single rubric-visibility experiment can measure in isolation.
 
 ---
 
