@@ -178,15 +178,6 @@ If the rubric-specific contamination effect is real, what follows for evaluation
 
 ---
 
-## Open Questions
-
-1. Does rubric contamination differ between evaluation targets that are *intrinsic* (the model's own reasoning quality) versus *extrinsic* (task completion)? We tested intrinsic targets; the effect may be weaker for concrete task benchmarks.
-2. Can the contamination effect be reversed by explicitly instructing models to reason authentically? And does that instruction itself become a contamination vector?
-3. What is the within-model consistency of the rubric optimization pattern? Do models that game rubric X also game rubric Y, or is it task-specific?
-4. Does the effect weaken as model capability increases further? The o4-mini data suggests the opposite, but the sample is small.
-
----
-
 ## Data and Code
 
 All trial data, analysis code, task definitions, and judge templates are in this repository:
