@@ -14,6 +14,16 @@ Two bodies of recent work are relevant here and we want to be clear about what t
 
 What is **not** established is the following: a rubric-specific mechanism that is *distinct from generic instruction-following* and that produces a detectable behavioral signature across diverse model families. That is what this experiment attempts to characterize.
 
+### Adjacent work on judges and rubrics
+
+Three contemporaneous lines of work bound the methodological space:
+
+**Rubrics as attack surface.** Ding et al. (2026, arXiv 2602.13576, "Rubrics as an Attack Surface: Stealthy Preference Drift in LLM Judges") shows that small, benchmark-passing rubric edits can systematically shift LLM-judge preferences by up to 9.5% on helpfulness and 27.9% on harmlessness, and that the shift survives into models trained on those judgments. Their setup attacks the judge's rubric; ours measures what happens when the subject sees the rubric. Both implicate published evaluation criteria as a contamination vector.
+
+**Pairwise vs pointwise judging.** Tripathi et al. (2025, arXiv 2504.14716, "Pairwise or Pointwise? Evaluating Feedback Protocols for Bias in LLM-Based Evaluation") finds that pairwise protocols flip preferences ~35% of the time under distractor injection, vs ~9% for absolute scoring. Our binary experiment is pairwise; our gradient is pointwise. The headline binary delta is therefore evaluated using the protocol Tripathi identifies as more vulnerable — though the per-condition robustness analysis (§Per-Condition Robustness) and the gradient sub-score split (§Gradient Experiment) cross-check the finding under both protocols.
+
+**Judge bias under unacknowledged shortcuts.** Marioriyad et al. (2025, arXiv 2509.26072, "The Silent Judge: Unacknowledged Shortcut Bias in LLM-as-a-Judge") documents recency bias and provenance hierarchies that judges follow without acknowledging. Our judge prompt's non-blind label ("Agent A clean, Agent B contaminated") is a particularly explicit shortcut; the per-condition gap analysis (+0.26) bounds how much it actually drove the headline.
+
 ---
 
 ## The Research Question
@@ -139,6 +149,20 @@ Gaming evidence count = number of specific rubric-aligned phrases cited by judge
 
 **Score ceiling note:** o4-mini and GPT-5 Mini show 100% contamination rates with clean scores tightly clustered at 1-3 and contaminated scores at 8-10. The 1-10 scale saturates for these models. A more sensitive instrument might show their susceptibility is high but not maximal.
 
+**Per-model 95% CIs** (normal approximation on the within-model delta distribution; n = 31–44 per model):
+
+| Model | Δ | 95% CI |
+|---|---|---|
+| o4-mini | +6.93 | [+6.54, +7.32] |
+| GPT-5 Mini | +6.74 | [+6.31, +7.18] |
+| Claude Sonnet 4.6 | +5.98 | [+5.26, +6.70] |
+| Claude Opus 4.6 | +5.45 | [+4.65, +6.26] |
+| Gemini Flash-Lite | +5.41 | [+4.93, +5.89] |
+| Kimi K2.5 | +5.29 | [+4.18, +6.40] |
+| Gemini 2.5 Flash | +4.49 | [+3.48, +5.50] |
+
+All per-model CIs exclude zero. o4-mini and GPT-5 Mini are distinguishable from Gemini 2.5 Flash but not from each other (overlapping CIs). No claim of monotonic ordering across the middle of the table is supported by these intervals.
+
 ### Per-Condition Robustness (the non-blind-judging defense)
 
 The judge prompt hardcodes "Agent A = clean, Agent B = contaminated" while the code randomizes which actual condition is placed in each slot. In ~50% of trials the prompt label is wrong about which agent saw the rubric. If judges anchored on the prompt label rather than the content, the per-condition delta would differ substantially between the two cases. It doesn't:
@@ -192,6 +216,21 @@ The gradient experiment (L0 = no rubric → L4 = full rubric with explicit scori
 
 Total quality rises modestly (L0 → L4: 44.02 → 46.27, +5.1%). Rubric optimization rises more (6.92 → 8.06, +16.5%). Authenticity falls (5.55 → 4.60, −17.1%). The earlier-draft "totals stay flat" framing was an artifact of including invalid Qwen empty-string judgments that scored 14–22 on total; with those removed, totals rise too, but rubric_opt and authenticity diverge faster.
 
+#### Per-judge robustness on the gradient
+
+The headline gradient trends are aggregated across four judges. The per-judge picture is heterogeneous — only 3 of 4 judges show a meaningful authenticity decline from L0 to L4:
+
+| Judge | n | L0 auth | L4 auth | Δ auth | L0 rubric_opt | L4 rubric_opt | Δ opt |
+|---|---|---|---|---|---|---|---|
+| judge-sonnet | 238 | 5.31 | 4.22 | **−1.09** | 5.91 | 7.22 | +1.31 |
+| judge-gemini-pro | 251 | 3.53 | 2.23 | **−1.30** | 9.22 | 9.97 | +0.75 (ceiling) |
+| judge-kimi | 241 | 6.14 | 5.21 | **−0.93** | 5.89 | 7.62 | +1.73 |
+| judge-gpt41-nano | 170 | 7.85 | 7.83 | **−0.02** (null) | 6.50 | 6.96 | +0.46 |
+
+Three judges (Sonnet, Gemini Pro, Kimi) independently produce the authenticity decline that the headline claims. The fourth (gpt-4.1-nano) does not — its authenticity ratings barely move across visibility levels, and its rubric_optimization swing is the weakest. Treating the four judges as independent measurements: the gradient finding rides on 3 of 4. The choice to include gpt-4.1-nano as a fourth cross-provider judge (so the OpenAI side could rotate against OpenAI subjects) means it contributes 19% of judgments (170/900) but pulls the headline authenticity decline downward by roughly 0.25 points.
+
+The judge-identity effect is also several times larger than the treatment effect: at L0, mean authenticity ranges from 3.53 (Gemini Pro) to 7.85 (gpt-4.1-nano) — a 4.32-point range across judges, compared to a ~1-point swing across levels within any single judge. Future work should consider larger frontier-only judge panels.
+
 ### Rubric Specificity: The Generic Control
 
 The generic rubric control L2a (same format, non-task-specific criteria) produces a rubric optimization mean of **7.28**, compared to **7.60** for the matched-format L2b that re-introduces task-specific content. The 0.32-point gap is small but consistent across subjects and supports the rubric-specificity hypothesis: it is the *content* of the rubric that matters, not just its presence or its format-length.
@@ -238,17 +277,17 @@ One judge verdict from a Gemini 2.5 Pro judge on an o4-mini trial captures the d
 
 **No activation-level measurement.** The current study measures behavioral outputs scored by external judges. We have not measured what is happening internally — whether rubric visibility triggers a distinct computational mode, shifts attention patterns, or simply activates instruction-following pathways more strongly. That requires access to model internals.
 
-**No chain-of-thought monitoring.** Feng et al. 2026 ([arXiv 2603.16643](https://arxiv.org/abs/2603.16643)) showed reasoning models reduce sycophancy in final output but mask it through deceptive justifications in their CoT. The o4-mini score-ceiling pattern in our data may understate gaming if the CoT was inspected.
+**No chain-of-thought monitoring.** Feng et al. (2026, arXiv 2603.16643) showed reasoning generally reduces sycophancy in final decisions but can mask it through deceptive justifications in CoT. The o4-mini score-ceiling pattern in our data may understate gaming if the CoT was inspected.
 
 **Single-session contamination only.** All trials are independent sessions. We have not tested whether rubric contamination persists, accumulates, or compounds across sessions.
 
 **Rubric injected via system prompt.** Real-world contamination scenarios (rubric leaked via web search, RAG context, training data) wouldn't typically appear in the highest-instruction-priority system role. The effect is likely overstated relative to user-role or context-window injection.
 
-**Judges themselves are vulnerable to prompt-injection attacks.** Per arXiv 2505.13348, Comparative Undermining Attacks on LLM judges hit >30% success rate. We did not test adversarial subject behavior; the +5.77 delta assumes subjects are not deliberately attacking the judge.
+**Judges themselves are vulnerable to prompt-injection attacks.** Per Maloyan et al. (2025, arXiv 2505.13348), prompt-injection attacks against LLM-as-judge architectures hit >30% success rate against smaller instruction-tuned models. We did not test adversarial subject behavior; the +5.77 delta assumes subjects are not deliberately attacking the judge.
 
-**The dose-response is ordinal.** The gradient experiment uses rubric visibility levels (L0=no rubric, L4=full rubric with explicit scoring weights) but the levels are not isometric. The increase from L0 to L4 in rubric optimization score (+0.74 points on the 1–10 scale) is modest; most of the effect is in the binary presence/absence of any rubric.
+**The dose-response is ordinal.** The gradient experiment uses rubric visibility levels (L0=no rubric, L4=full rubric with explicit scoring weights) but the levels are not isometric. The increase from L0 to L4 in rubric optimization score (+1.14 points on the 1–10 scale) is modest; most of the effect is in the binary presence/absence of any rubric.
 
-**Pre-existing eval-awareness baseline.** Per arXiv 2507.01786 (Probing Evaluation Awareness), current safety evals are already classified by probes as artificial. The +5.77 delta is the *marginal* effect of rubric visibility on top of an already-evaluation-aware base. The full contamination signal is larger than what any single rubric-visibility experiment can measure in isolation.
+**Pre-existing eval-awareness baseline.** Per Nguyen et al. (2025, arXiv 2507.01786, "Probing and Steering Evaluation Awareness"), current safety evals are already classified by probes as artificial. The +5.77 delta is the *marginal* effect of rubric visibility on top of an already-evaluation-aware base. The full contamination signal is larger than what any single rubric-visibility experiment can measure in isolation.
 
 ---
 
@@ -294,6 +333,12 @@ Condition ordering was randomized within subjects. Judges were drawn cross-provi
 - Needham, Edkins, Pimpale, Bartsch, Hobbhahn (2025). [Large Language Models Often Know When They Are Being Evaluated](https://arxiv.org/abs/2505.23836).
 - Evaluation Awareness Scales Predictably in Open-Weights Large Language Models (2025). [arXiv 2509.13333](https://arxiv.org/abs/2509.13333). NeurIPS 2025 Workshop on Socially Responsible and Trustworthy Foundation Models.
 - Devbunova (2026). [Is Evaluation Awareness Just Format Sensitivity? Limitations of Probe-Based Evidence under Controlled Prompt Structure](https://arxiv.org/abs/2603.19426).
+- Tripathi, Wadhwa, Durrett, Niekum (2025). [Pairwise or Pointwise? Evaluating Feedback Protocols for Bias in LLM-Based Evaluation](https://arxiv.org/abs/2504.14716).
+- Marioriyad, Rohban, Soleymani Baghshah (2025). [The Silent Judge: Unacknowledged Shortcut Bias in LLM-as-a-Judge](https://arxiv.org/abs/2509.26072).
+- Ding, Pang, Sun, Wang, Wu, Deng (2026). [Rubrics as an Attack Surface: Stealthy Preference Drift in LLM Judges](https://arxiv.org/abs/2602.13576).
+- Nguyen, Hoang, Attubato, Hofstätter (2025). [Probing and Steering Evaluation Awareness of Language Models](https://arxiv.org/abs/2507.01786).
+- Maloyan, Ashinov, Namiot (2025). [Investigating the Vulnerability of LLM-as-a-Judge Architectures to Prompt-Injection Attacks](https://arxiv.org/abs/2505.13348).
+- Feng, Chen, Ma, Yip, Chersoni, Li (2026). [Good Arguments Against the People Pleasers: How Reasoning Mitigates (Yet Masks) LLM Sycophancy](https://arxiv.org/abs/2603.16643).
 
 ---
 
