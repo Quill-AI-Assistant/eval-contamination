@@ -57,6 +57,8 @@ This is the strongest single content-detection signal in the dataset — and the
 
 **Total quality rises modestly (44.02 → 46.27, +5.1%). Rubric-opt rises more (+16.5%). Authenticity falls (-17.1%).** The earlier draft framing ("Total stays flat 40.3 → 40.6") was an artifact of including 189 Qwen empty-string judgments that scored total = 14–22; removed from the table above. The sub-score divergence is real but smaller than previously reported.
 
+**Per-judge heterogeneity:** the gradient authenticity decline is supported by 3 of 4 judges (Sonnet −1.09, Gemini Pro −1.30, Kimi −0.93). The 4th judge (gpt-4.1-nano) shows essentially no movement (−0.02). The rubric_opt rise is supported by all 4 judges but with very different absolute levels (Gemini Pro saturated at 9.2–10.0). See POST.md §Per-judge robustness on the gradient.
+
 **Reproducibility note.** The current `rubric_awareness.py` runner implements a 4-condition design (baseline / rubric_visible / generic_rubric / competitive) that does *not* produce the L0–L4 schema in `results/gradient-results.json`. The published gradient data is from an earlier multi-level runner not preserved in git history. Re-running `rubric_awareness.py` will not reproduce the gradient table above. The binary experiment (`eval_contamination.py`) reproduces correctly.
 
 ## What the score measures (caveat — read this before citing)
