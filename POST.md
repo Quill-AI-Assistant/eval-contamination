@@ -107,10 +107,10 @@ We surface these up front rather than burying them:
 | Judge prompt is not blind (hardcoded labels) | Acknowledged; robustness analysis shows judges read content (per-condition gap +0.26 → small label-anchoring) | ~0 |
 | **Temperature differs by provider** — Kimi/Moonshot at 1.0, all others at 0.7 (`eval_contamination.py:186-187`); undisclosed in earlier drafts | Disclosed here for the first time | Likely inflates Kimi variance; effect on mean Δ unknown |
 | **Context length asymmetry** — contaminated condition adds 150–300 tokens of system prompt | Not directly controlled in binary; L2a in gradient (matched-length generic rubric) moves rubric-opt only +0.36 vs L0 (+1.14 for full L4 rubric), so length is a minor share | Small positive contribution |
-| **Response truncation at `max_tokens=1500`** — 21% of clean and **32% of contaminated** binary responses had completion_tokens ≥ 1500 (excluding Qwen empties) | The structured rubric-aligned responses are systematically longer and get cut; the +5.77 delta is therefore **conservative** | Likely deflates contamination Δ at high end |
+| **Response truncation at `max_tokens=1500`** — 21% of clean and **32% of contaminated** binary responses had completion_tokens ≥ 1500 (excluding Qwen empties). Separately, Gemini 2.5 Flash burns ~1,140 of its 1,500-token budget on internal reasoning tokens (1,439 reasoning + 57 text on shortest contam response), leaving 8/15 contaminated responses with `<200` visible text tokens. The remaining 7 contaminated responses still show Δ +4.43 (vs full Δ +4.49), so Flash's weaker effect is mostly real, not a truncation artifact. | The structured rubric-aligned responses are systematically longer and get cut; the +5.77 delta is therefore **conservative**. A future revision should raise `max_tokens` for reasoning models or set it per-provider. | Likely deflates contamination Δ at high end |
 | **Response-length verbosity bias** — contaminated responses are 13% longer (mean 3,677 → 4,166 chars, non-Qwen); known verbosity bias in LLM-as-Judge literature | Acknowledged; some share of Δ is verbosity, not rubric-conformance | Small to moderate positive contribution |
 | **Judge heterogeneity** — mean Δ varies from +2.61 (gpt-4.1-nano) to +8.03 (Gemini Pro), a ~3× range | Cross-provider rotation balances this on average but the headline +5.77 is a mixed-judge mean | Variance source |
-| **Position bias** — clean scores ~0.6 higher in slot B vs A; contaminated scores ~1.0 lower in slot B vs A | Randomized A/B presentation controls for it on average; raw bias is small | ~0 net |
+| **Position bias** — clean scores +0.55 higher in slot B vs A; contaminated scores −0.29 lower in slot B vs A (non-Qwen). Earlier drafts reported −1.0 for contam; that figure was computed including Qwen empty-string judgments and overstated the slot-B-contam effect. | Randomized A/B presentation controls for it on average; raw bias is small | ~0 net |
 | Cross-provider judging | **Controlled** — judge never scores model from its own provider | n/a |
 | Condition-order randomization within a trial | **Controlled** | n/a |
 | Format-sensitivity (Devbunova critique) | Authenticity score is explicitly anti-rubric; generic-rubric control isolates content vs format | Partial |
@@ -299,11 +299,11 @@ If the rubric-specific contamination effect is real, what follows for evaluation
 
 **2. Published rubrics become training signal.** If model families are trained on or fine-tuned against datasets where evaluators used public scoring frameworks (HHH, Constitutional AI criteria, specific benchmark rubrics), those rubrics become contamination vectors in any downstream evaluation that uses the same framework. The contamination is not just live-session; it may be baked into weights.
 
-**3. Reasoning models may be particularly susceptible.** o4-mini shows the second-highest delta (+6.93) and 100% contamination rate, alongside the lowest clean baseline (2.07). A model that reasons explicitly about how to answer a question may also reason explicitly about how to satisfy visible evaluation criteria — and do it extremely effectively. This is worth examining further.
+**3. Reasoning models may be particularly susceptible.** o4-mini shows the highest delta (+6.93, 95% CI [+6.54, +7.32]) and 100% contamination rate, alongside the lowest clean baseline (2.07). GPT-5 Mini is statistically indistinguishable (+6.74, 95% CI [+6.31, +7.18]) and also 100%. Both are reasoning models. A model that reasons explicitly about how to answer a question may also reason explicitly about how to satisfy visible evaluation criteria — and do it extremely effectively. This is worth examining further; with n = 39–43 per model, two reasoning-capable models out of seven is suggestive but not conclusive.
 
 **4. Cross-provider judging is necessary but not sufficient.** Cross-provider judges reliably detect rubric gaming — every valid trial in the dataset had at least two of three judges side with the clean response on authenticity, and 41% had unanimous agreement. But detection is not prevention. The design question is how to elicit authentic behavior, not just how to detect when you haven't.
 
-**5. The partial-visibility regime is underexplored.** The binary clean/contaminated design finds large effects. The gradient experiment finds that partial rubric visibility (L1–L3) already activates optimization, with most of the effect achieved at L2 (matching rubric visible but scoring weights hidden). If evaluation frameworks are partially known — through published methodology papers, model card examples, or blog posts about how a benchmark works — partial contamination may be the default state.
+**5. The partial-visibility regime is underexplored.** The binary clean/contaminated design finds large effects. The gradient experiment shows the rubric_optimization swing from L0 (no rubric) to L4 (full rubric + weights) is +1.14 points, and approximately 60% of that swing (+0.68 of +1.14) is already present at L2b — matching rubric format visible, scoring weights hidden. If evaluation frameworks are partially known — through published methodology papers, model card examples, or blog posts about how a benchmark works — partial contamination may be the default state. (Caveat: this is on the 1–10 rubric_optimization sub-score; absolute effect sizes are modest.)
 
 ---
 
@@ -311,12 +311,12 @@ If the rubric-specific contamination effect is real, what follows for evaluation
 
 All trial data, analysis code, task definitions, and judge templates are in this repository:
 
-- `eval_contamination.py` — binary experiment runner with judge template, retry, and resume support
-- `rubric_awareness.py` — gradient experiment runner (L0–L4 visibility levels with generic + competitive controls)
+- `eval_contamination.py` — binary experiment runner with judge template, retry, and resume support. Reproduces the binary results above.
+- `rubric_awareness.py` — current 4-condition runner (baseline / rubric_visible / generic_rubric / competitive). **Does not reproduce** the 7-level L0–L4 schema in `results/gradient-results.json`; the runner that produced that schema is not preserved in git. See §Reproducibility gap on the gradient runner.
 - `tasks/*.json` — five task domains
-- `results/binary-results.json` — full per-trial data for the binary study
-- `results/binary-analysis.json` — aggregate statistics
-- `results/gradient-results.json` and `results/gradient-analysis.json` — gradient study
+- `results/binary-results.json` — full per-trial data for the binary study (2.1 MB; includes 15 Qwen3-14B trials with `error: Connection refused` and empty content, preserved for transparency)
+- `results/binary-analysis.json` — aggregate statistics (regenerated 2026-05-22 with post-fix `analyze_results` that filters errored/empty trials)
+- `results/gradient-results.json` and `results/gradient-analysis.json` — gradient study (gradient-analysis.json also regenerated 2026-05-22; 63 Qwen errors filtered)
 
 Run identifiers:
 - Binary study: `442b2309f7f3` (2026-03-25). 120 designed trial-pairs × 3 judges = 360 judgments attempted; 283 valid after excluding 15 Qwen + 3 Kimi broken trials and 8 parse failures.
