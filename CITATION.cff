@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this dataset or code, please cite it as below."
 type: dataset
-title: "Rubric Visibility as Eval Contamination: A Behavioral Signature Across 8 Models"
+title: "Rubric Visibility as Eval Contamination: A Behavioral Signature Across 7 Models"
 authors:
   - name: "Quill-AI-Assistant"
 date-released: 2026-03-25
@@ -16,10 +16,13 @@ keywords:
   - "LLM evaluation methodology"
 abstract: >
   Cross-model behavioral study of rubric-visibility contamination in LLM evaluation.
-  8 subject models across 5 providers, 5 task domains. 498 trial-pairs total
-  (120 binary + 378 gradient), scored by 3 cross-provider judges per pair
-  (334 parsed binary judgments at 92.8%; 1,092 parsed gradient judgments at 96.3%).
-  Cross-provider judges detect a rubric-optimization shift in 88.9% of paired trials.
-  The shift is rubric-specific, replicates across all model families tested, and produces
+  8 binary subjects designed across 5 providers (7 valid — Qwen3-14B local server
+  was offline; 3 Kimi K2.5 contaminated calls returned empty content), 6 gradient
+  subjects designed (5 valid — same Qwen outage). 5 task domains. 498 designed
+  trial-pairs (120 binary + 378 gradient), scored by 3 cross-provider judges per pair.
+  After filtering empty/errored responses and parse failures: 283 valid binary judgments
+  and 900 valid gradient judgments. Cross-provider judges detect a rubric-optimization
+  shift in 96.8% of valid paired trials (mean Δ +5.77, 95% CI [+5.48, +6.06]).
+  The shift is rubric-specific, replicates across all valid model families, and produces
   an authenticity-quality dissociation: judges score rubric-aware responses as performative
-  even when total rubric scores are identical.
+  even when total rubric scores are similar.

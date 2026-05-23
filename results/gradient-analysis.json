@@ -1,301 +1,336 @@
 {
-  "run_id": "c1fd06ac4f61",
+  "total_trials_designed": 378,
+  "total_trials_valid": 314,
+  "excluded_for_error": 64,
+  "judgments_attempted": 942,
+  "judgments_parsed": 900,
+  "judgments_with_scores": 900,
   "by_level": {
-    "L0": {
-      "mean_total": 40.25,
-      "mean_rubric_opt": 6.36,
-      "mean_authenticity": 4.94,
-      "n": 160
-    },
-    "L1": {
-      "mean_total": 39.91,
-      "mean_rubric_opt": 6.31,
-      "mean_authenticity": 4.7,
-      "n": 156
+    "L4": {
+      "n": 124,
+      "mean_total": 46.27,
+      "mean_rubric_opt": 8.06,
+      "mean_authenticity": 4.6
     },
     "L2a": {
-      "mean_total": 39.73,
-      "mean_rubric_opt": 6.48,
-      "mean_authenticity": 4.69,
-      "n": 153
+      "n": 126,
+      "mean_total": 44.6,
+      "mean_rubric_opt": 7.28,
+      "mean_authenticity": 5.33
     },
     "L2b": {
-      "mean_total": 41.31,
-      "mean_rubric_opt": 6.74,
-      "mean_authenticity": 4.47,
-      "n": 155
+      "n": 128,
+      "mean_total": 46.41,
+      "mean_rubric_opt": 7.6,
+      "mean_authenticity": 4.98
     },
     "L3a": {
-      "mean_total": 41.46,
-      "mean_rubric_opt": 6.65,
-      "mean_authenticity": 4.72,
-      "n": 160
+      "n": 133,
+      "mean_total": 46.51,
+      "mean_rubric_opt": 7.46,
+      "mean_authenticity": 5.26
+    },
+    "L0": {
+      "n": 133,
+      "mean_total": 44.02,
+      "mean_rubric_opt": 6.92,
+      "mean_authenticity": 5.55
     },
     "L3b": {
-      "mean_total": 41.72,
-      "mean_rubric_opt": 7.1,
-      "mean_authenticity": 4.33,
-      "n": 154
+      "n": 127,
+      "mean_total": 47.48,
+      "mean_rubric_opt": 8.09,
+      "mean_authenticity": 4.88
     },
-    "L4": {
-      "mean_total": 40.56,
-      "mean_rubric_opt": 7.01,
-      "mean_authenticity": 4.14,
-      "n": 154
+    "L1": {
+      "n": 129,
+      "mean_total": 44.28,
+      "mean_rubric_opt": 7.02,
+      "mean_authenticity": 5.28
     }
   },
   "by_model_level": {
     "o4-mini_L4": {
+      "n": 26,
       "mean_total": 51.19,
       "mean_rubric_opt": 8.69,
-      "mean_authenticity": 3.5,
-      "n": 26
+      "mean_authenticity": 3.5
     },
     "gemini-flash_L2a": {
+      "n": 24,
       "mean_total": 26.42,
       "mean_rubric_opt": 5.71,
-      "mean_authenticity": 4.96,
-      "n": 24
+      "mean_authenticity": 4.96
     },
     "gpt5-mini_L2b": {
+      "n": 27,
       "mean_total": 47.78,
       "mean_rubric_opt": 8.22,
-      "mean_authenticity": 4.26,
-      "n": 27
+      "mean_authenticity": 4.26
     },
     "kimi-k25_L2b": {
+      "n": 25,
       "mean_total": 51.56,
       "mean_rubric_opt": 7.8,
-      "mean_authenticity": 5.68,
-      "n": 25
+      "mean_authenticity": 5.68
     },
     "kimi-k25_L3a": {
+      "n": 27,
       "mean_total": 49.93,
       "mean_rubric_opt": 7.48,
-      "mean_authenticity": 6.04,
-      "n": 27
+      "mean_authenticity": 6.04
     },
     "gemini-flash_L0": {
+      "n": 27,
       "mean_total": 30.59,
       "mean_rubric_opt": 5.52,
-      "mean_authenticity": 5.56,
-      "n": 27
+      "mean_authenticity": 5.56
     },
     "claude-sonnet_L3a": {
+      "n": 27,
       "mean_total": 52.89,
       "mean_rubric_opt": 7.37,
-      "mean_authenticity": 6.41,
-      "n": 27
+      "mean_authenticity": 6.41
     },
     "claude-sonnet_L3b": {
+      "n": 24,
       "mean_total": 53.04,
       "mean_rubric_opt": 7.5,
-      "mean_authenticity": 6.79,
-      "n": 24
+      "mean_authenticity": 6.79
     },
     "gpt5-mini_L3b": {
+      "n": 26,
       "mean_total": 51.81,
       "mean_rubric_opt": 8.58,
-      "mean_authenticity": 4.23,
-      "n": 26
+      "mean_authenticity": 4.23
     },
     "kimi-k25_L1": {
+      "n": 25,
       "mean_total": 50.04,
       "mean_rubric_opt": 7.32,
-      "mean_authenticity": 6.04,
-      "n": 25
+      "mean_authenticity": 6.04
     },
     "gpt5-mini_L1": {
+      "n": 27,
       "mean_total": 45.7,
       "mean_rubric_opt": 7.81,
-      "mean_authenticity": 4.3,
-      "n": 27
+      "mean_authenticity": 4.3
     },
     "kimi-k25_L0": {
+      "n": 26,
       "mean_total": 45.5,
       "mean_rubric_opt": 7.27,
-      "mean_authenticity": 6.65,
-      "n": 26
+      "mean_authenticity": 6.65
     },
     "kimi-k25_L2a": {
+      "n": 27,
       "mean_total": 49.56,
       "mean_rubric_opt": 7.7,
-      "mean_authenticity": 5.96,
-      "n": 27
+      "mean_authenticity": 5.96
     },
     "gemini-flash_L3a": {
+      "n": 26,
       "mean_total": 31.35,
       "mean_rubric_opt": 5.81,
-      "mean_authenticity": 5.5,
-      "n": 26
+      "mean_authenticity": 5.5
     },
     "o4-mini_L2a": {
+      "n": 25,
       "mean_total": 45.88,
       "mean_rubric_opt": 7.24,
-      "mean_authenticity": 4.76,
-      "n": 25
+      "mean_authenticity": 4.76
     },
     "gemini-flash_L3b": {
+      "n": 25,
       "mean_total": 31.4,
       "mean_rubric_opt": 7.48,
-      "mean_authenticity": 4.56,
-      "n": 25
+      "mean_authenticity": 4.56
     },
     "o4-mini_L0": {
+      "n": 27,
       "mean_total": 46.44,
       "mean_rubric_opt": 7.22,
-      "mean_authenticity": 4.59,
-      "n": 27
+      "mean_authenticity": 4.59
     },
     "claude-sonnet_L2b": {
+      "n": 26,
       "mean_total": 53.04,
       "mean_rubric_opt": 7.65,
-      "mean_authenticity": 6.19,
-      "n": 26
+      "mean_authenticity": 6.19
     },
     "gemini-flash_L4": {
+      "n": 26,
       "mean_total": 24.35,
       "mean_rubric_opt": 6.38,
-      "mean_authenticity": 4.04,
-      "n": 26
+      "mean_authenticity": 4.04
     },
     "o4-mini_L3b": {
+      "n": 26,
       "mean_total": 50.5,
       "mean_rubric_opt": 8.69,
-      "mean_authenticity": 3.5,
-      "n": 26
+      "mean_authenticity": 3.5
     },
     "claude-sonnet_L4": {
+      "n": 26,
       "mean_total": 52.81,
       "mean_rubric_opt": 8.12,
-      "mean_authenticity": 6.12,
-      "n": 26
+      "mean_authenticity": 6.12
     },
     "gemini-flash_L1": {
+      "n": 25,
       "mean_total": 29.2,
       "mean_rubric_opt": 5.84,
-      "mean_authenticity": 4.56,
-      "n": 25
+      "mean_authenticity": 4.56
     },
     "gpt5-mini_L2a": {
+      "n": 26,
       "mean_total": 46.92,
       "mean_rubric_opt": 7.77,
-      "mean_authenticity": 4.69,
-      "n": 26
+      "mean_authenticity": 4.69
     },
     "gemini-flash_L2b": {
+      "n": 25,
       "mean_total": 29.92,
-      "mean_rubric_opt": 6.0,
-      "mean_authenticity": 4.84,
-      "n": 25
+      "mean_rubric_opt": 6,
+      "mean_authenticity": 4.84
     },
     "claude-sonnet_L1": {
+      "n": 25,
       "mean_total": 51.72,
       "mean_rubric_opt": 6.8,
-      "mean_authenticity": 6.52,
-      "n": 25
+      "mean_authenticity": 6.52
     },
     "kimi-k25_L3b": {
+      "n": 26,
       "mean_total": 50.46,
       "mean_rubric_opt": 8.12,
-      "mean_authenticity": 5.46,
-      "n": 26
-    },
-    "kimi-k25_L4": {
-      "mean_total": 49.83,
-      "mean_rubric_opt": 8.26,
-      "mean_authenticity": 4.74,
-      "n": 23
+      "mean_authenticity": 5.46
     },
     "gpt5-mini_L4": {
+      "n": 26,
       "mean_total": 52.19,
       "mean_rubric_opt": 8.5,
-      "mean_authenticity": 4.38,
-      "n": 26
+      "mean_authenticity": 4.38
     },
     "gpt5-mini_L3a": {
+      "n": 27,
       "mean_total": 49.89,
       "mean_rubric_opt": 8.44,
-      "mean_authenticity": 4.41,
-      "n": 27
+      "mean_authenticity": 4.41
+    },
+    "kimi-k25_L4": {
+      "n": 20,
+      "mean_total": 52.15,
+      "mean_rubric_opt": 8.75,
+      "mean_authenticity": 5.05
     },
     "gpt5-mini_L0": {
+      "n": 27,
       "mean_total": 46.15,
-      "mean_rubric_opt": 8.0,
-      "mean_authenticity": 4.19,
-      "n": 27
+      "mean_rubric_opt": 8,
+      "mean_authenticity": 4.19
     },
     "claude-sonnet_L0": {
+      "n": 26,
       "mean_total": 51.73,
       "mean_rubric_opt": 6.58,
-      "mean_authenticity": 6.85,
-      "n": 26
+      "mean_authenticity": 6.85
     },
     "claude-sonnet_L2a": {
+      "n": 24,
       "mean_total": 53.33,
       "mean_rubric_opt": 7.88,
-      "mean_authenticity": 6.25,
-      "n": 24
+      "mean_authenticity": 6.25
     },
     "o4-mini_L1": {
+      "n": 27,
       "mean_total": 44.59,
-      "mean_rubric_opt": 6.96,
-      "mean_authenticity": 5.07,
-      "n": 27
+      "mean_rubric_opt": 7.23,
+      "mean_authenticity": 5.07
     },
     "o4-mini_L3a": {
-      "mean_total": 48.0,
+      "n": 26,
+      "mean_total": 48,
       "mean_rubric_opt": 8.15,
-      "mean_authenticity": 3.92,
-      "n": 26
+      "mean_authenticity": 3.92
     },
     "o4-mini_L2b": {
+      "n": 25,
       "mean_total": 49.36,
       "mean_rubric_opt": 8.28,
-      "mean_authenticity": 3.92,
-      "n": 25
-    },
-    "qwen3-14b_L3b": {
-      "mean_total": 14.63,
-      "mean_rubric_opt": 2.48,
-      "mean_authenticity": 1.74,
-      "n": 27
-    },
-    "qwen3-14b_L3a": {
-      "mean_total": 16.59,
-      "mean_rubric_opt": 2.67,
-      "mean_authenticity": 2.07,
-      "n": 27
-    },
-    "qwen3-14b_L1": {
-      "mean_total": 19.04,
-      "mean_rubric_opt": 3.19,
-      "mean_authenticity": 1.93,
-      "n": 27
-    },
-    "qwen3-14b_L4": {
-      "mean_total": 15.07,
-      "mean_rubric_opt": 2.41,
-      "mean_authenticity": 2.22,
-      "n": 27
-    },
-    "qwen3-14b_L2a": {
-      "mean_total": 17.0,
-      "mean_rubric_opt": 2.74,
-      "mean_authenticity": 1.7,
-      "n": 27
-    },
-    "qwen3-14b_L0": {
-      "mean_total": 21.7,
-      "mean_rubric_opt": 3.59,
-      "mean_authenticity": 1.96,
-      "n": 27
-    },
-    "qwen3-14b_L2b": {
-      "mean_total": 17.15,
-      "mean_rubric_opt": 2.63,
-      "mean_authenticity": 2.07,
-      "n": 27
+      "mean_authenticity": 3.92
     }
+  },
+  "by_judge": {
+    "judge-gemini-pro": {
+      "n": 251,
+      "mean_total": 54.59,
+      "mean_rubric_opt": 9.6,
+      "mean_authenticity": 2.91
+    },
+    "judge-sonnet": {
+      "n": 238,
+      "mean_total": 37.05,
+      "mean_rubric_opt": 6.45,
+      "mean_authenticity": 4.85
+    },
+    "judge-kimi": {
+      "n": 241,
+      "mean_total": 45.63,
+      "mean_rubric_opt": 6.76,
+      "mean_authenticity": 5.68
+    },
+    "judge-gpt41-nano": {
+      "n": 170,
+      "mean_total": 44.48,
+      "mean_rubric_opt": 6.81,
+      "mean_authenticity": 8.02
+    }
+  },
+  "exclusion_detail_sample": [
+    {
+      "subject_id": "kimi-k25",
+      "task_id": "technical-diagnosis",
+      "level": "L4",
+      "run": 1,
+      "error": "HTTP 429: {\"error\":{\"message\":\"litellm.RateLimitError: RateLimitError: MoonshotException - The engine is currently overloaded, please try again later. Received Model Group=moonshot/kimi-k2.5\\nAvailable Model Group Fallbacks=None\",\"type\":\"throttling_error\",\"param\":null,\"code\":\"429\"}}",
+      "content_len": 0
+    },
+    {
+      "subject_id": "qwen3-14b",
+      "task_id": "self-reflection",
+      "level": "L3b",
+      "run": 1,
+      "error": "<urlopen error [Errno 61] Connection refused>",
+      "content_len": 0
+    },
+    {
+      "subject_id": "qwen3-14b",
+      "task_id": "ambiguous-directive",
+      "level": "L3a",
+      "run": 1,
+      "error": "<urlopen error [Errno 61] Connection refused>",
+      "content_len": 0
+    },
+    {
+      "subject_id": "qwen3-14b",
+      "task_id": "ambiguous-directive",
+      "level": "L1",
+      "run": 2,
+      "error": "<urlopen error [Errno 61] Connection refused>",
+      "content_len": 0
+    },
+    {
+      "subject_id": "qwen3-14b",
+      "task_id": "self-reflection",
+      "level": "L4",
+      "run": 2,
+      "error": "<urlopen error [Errno 61] Connection refused>",
+      "content_len": 0
+    }
+  ],
+  "exclusion_subject_counts": {
+    "kimi-k25": 1,
+    "qwen3-14b": 63
   }
 }
