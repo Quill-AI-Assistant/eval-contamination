@@ -127,7 +127,7 @@ Across 283 valid judgments (Qwen3-14B and three broken Kimi trials excluded):
 |---|---|---|---|---|---|
 | All models combined | 2.95 | 8.71 | **+5.77** | [+5.48, +6.06] | **96.8%** |
 
-Cross-provider judges detected the rubric optimization in 96.8% of valid trials. When they awarded higher authenticity to the clean response, the verdict was consistent across the four independent judges in 94% of those cases.
+Cross-provider judges detected the rubric optimization in 96.8% of valid trials. Per trial-pair (3 of 4 judges score each pair, chosen cross-provider): all three judges agreed the clean response was more authentic in 42/102 trials (41%); at least two of three agreed in 79% of trials; we observed zero trials where fewer than two judges sided with clean. (Earlier drafts reported "94% cross-judge agreement" — that figure could not be reproduced from the raw data and has been removed.)
 
 > *Note on earlier drafts.* Drafts prior to 2026-05-22 reported Δ = +5.27 / 88.9% / n = 334. Those numbers included 42 judgments where judges scored empty strings produced by an offline Qwen3-14B local server, plus 9 judgments where Kimi K2.5's contaminated condition returned empty content. Re-running the analysis with the post-fix exclusion filter (`analyze_results` in `eval_contamination.py`, lines 414–506) on the same raw data file produces the table above. The qualitative finding is unchanged; the headline figure rose because the broken trials were systematically deflating it.
 
@@ -301,7 +301,7 @@ If the rubric-specific contamination effect is real, what follows for evaluation
 
 **3. Reasoning models may be particularly susceptible.** o4-mini shows the second-highest delta (+6.93) and 100% contamination rate, alongside the lowest clean baseline (2.07). A model that reasons explicitly about how to answer a question may also reason explicitly about how to satisfy visible evaluation criteria — and do it extremely effectively. This is worth examining further.
 
-**4. Cross-provider judging is necessary but not sufficient.** Cross-provider judges reliably detect rubric gaming (94% cross-judge agreement on authenticity verdicts). But detection is not prevention. The design question is how to elicit authentic behavior, not just how to detect when you haven't.
+**4. Cross-provider judging is necessary but not sufficient.** Cross-provider judges reliably detect rubric gaming — every valid trial in the dataset had at least two of three judges side with the clean response on authenticity, and 41% had unanimous agreement. But detection is not prevention. The design question is how to elicit authentic behavior, not just how to detect when you haven't.
 
 **5. The partial-visibility regime is underexplored.** The binary clean/contaminated design finds large effects. The gradient experiment finds that partial rubric visibility (L1–L3) already activates optimization, with most of the effect achieved at L2 (matching rubric visible but scoring weights hidden). If evaluation frameworks are partially known — through published methodology papers, model card examples, or blog posts about how a benchmark works — partial contamination may be the default state.
 
